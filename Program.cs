@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using TicketManager.BLL;
 using TicketManager.DAL;
 
@@ -17,6 +18,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddDbContext<TicketContext>(Options => Options.UseSqlite(ConStr));
 
     builder.Services.AddScoped<SistemasBLL>();
+
+    builder.Services.AddScoped<NotificationService>();
 }
 
 var app = builder.Build();

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using TicketManager.BLL;
 using TicketManager.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     //agregamos el contexto al builder con el ConStr
     builder.Services.AddDbContext<TicketContext>(Options => Options.UseSqlite(ConStr));
+
+    builder.Services.AddScoped<SistemasBLL>();
 }
 
 var app = builder.Build();

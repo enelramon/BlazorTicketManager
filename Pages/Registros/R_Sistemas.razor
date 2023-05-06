@@ -1,0 +1,139 @@
+﻿@page "/Sistema"
+@page "/Sistema/{SistemaId:int}"
+@inject SistemasBLL SistemasBLL
+@inject NotificationService notificationService
+
+<EditForm Model="Sistema" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h3>Registro de Sistemas</h3>
+            </div>
+            <div class="card-body">
+                @*SistemaId*@
+                <div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 col-xl-4">
+                    <div class="input-group mb-3">
+                        <InputNumber @bind-Value="Sistema.SistemaId" class="form-control" aria-describedby="buscarButton" />
+                        <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="buscarButton">
+                            <i class="oi oi-magnifying-glass" />
+                        </button>
+                    </div>
+                </div>
+
+                @*Nombre*@
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
+                    <InputText @bind-Value="Sistema.Nombre" class="form-control" />
+                    <ValidationMessage For="@(() => Sistema.Nombre)" />
+                </div>
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-center">
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary" @onclick="Nuevo"> <i class="oi oi-file" /> Nuevo</button>
+                    <button type="submit" class="btn btn-success"> <i class="oi oi-document" /> Guardar</button>
+                    <button type="button" class="btn btn-danger" @onclick="Eliminar"><i class="oi oi-trash" /> Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int? SistemaId { get; set; }
+    public Sistemas Sistema { get; set; } = new Sistemas();
+
+    protected override void OnInitialized()
+    {
+        if (SistemaId.HasValue)
+        {
+            // si recibimos un {SistemaId:int} por parametro asignarlo
+            // y luego buscarla para que se vea en pantalla
+            Sistema.SistemaId = SistemaId.Value;
+            Buscar();
+        }
+    }
+    public void Buscar()
+    {
+        var sistemaEncontrado = SistemasBLL.Buscar(Sistema.SistemaId);
+        if (sistemaEncontrado != null)
+        {
+            Sistema = sistemaEncontrado;
+        }
+        else
+        {
+            notificationService.ShowNotification(
+            titulo: "Error de Busqueda",
+            mensaje: "Registro no encontrado",
+            NotificationSeverity.Error);
+        }
+    }
+
+    public void Nuevo()
+    {
+        this.Sistema = new Sistemas();
+    }
+
+    public void Guardar()
+    {
+        if (!Validar())
+        {
+            notificationService.ShowNotification(
+                titulo: "Validación",
+                mensaje: "Error Revise los campos",
+                NotificationSeverity.Error);
+            return;
+        }
+
+        var guardo = SistemasBLL.Guardar(this.Sistema);
+        if (guardo)
+        {
+            notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Guardado correctamente!",
+                NotificationSeverity.Success);
+            Nuevo();
+        }
+        else
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible guardar",
+                NotificationSeverity.Error);
+        }
+    }
+
+    public void Eliminar()
+    {
+        Buscar();
+        if (SistemasBLL.Eliminar(this.Sistema))
+        {
+            notificationService.ShowNotification(
+                titulo: "Exito",
+                mensaje: "Eliminado con Exito",
+                NotificationSeverity.Success);
+            Nuevo();
+        }
+        else
+        {
+            notificationService.ShowNotification(
+                titulo: "Error",
+                mensaje: "Ocurrio un error y no fue posible eliminar",
+                NotificationSeverity.Error);
+        }
+
+    }
+
+    bool Validar()
+    {
+        //todo: Validar que el nombre del sistema no este repetido.
+        return true;
+    }
+
+}
+

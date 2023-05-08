@@ -11,12 +11,27 @@
             </div>
 
             <div class="card-body">
-                <div class="input-group mb-3">
+                @*Apartado de busqueda con criterio*@
+                <div class="input-group">
+                    <select class="form-select" @bind="Filtro">
+                        <option value="" disabled selected>Selecciona un criterio:</option>
+                        <option value="1">SitemaId</option>
+                        <option value="2">Nombre Sitema</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Criterio:" @bind="Criterio"/>
+                    <button type="button" @onclick="Buscar" class="btn btn-primary input-group-text">
+                        <i class="oi oi-magnifying-glass"/></button> 
+                </div>
+                
+                <br>
+                @*Apartado deshabilitado*@@*Anterior barra de busqueda para la lista de sistemas registrados*@
+                @* <div class="input-group mb-3">
                     <InputText @bind-Value="Nombre" class="form-control" aria-describedby="buscarButton" />
                     <button @onclick="Buscar" class="btn btn-outline-primary" type="button" id="buscarButton">
                         <i class="oi oi-magnifying-glass" />
                     </button>
-                </div>
+                </div> *@
+                
 
                 <table class="table table-responsive table-condensed table-bordered table-striped table-hover">
                     <thead>
@@ -31,7 +46,7 @@
                             <tr>
                                 <td>@sistema.SistemaId</td>
                                 <td>@sistema.Nombre</td>
-                                <td><a class="btn btn-outline-primary" href="ocupacion/@sistema.SistemaId">Ver</a></td>
+                                <td><a class="btn btn-outline-primary" href="Sistema/@sistema.SistemaId">Ver</a></td>
                             </tr>
                         }
                     </tbody>
@@ -56,16 +71,38 @@
     public string Nombre { get; set; } = "";
     public int conteo { get; set; } = 0;
 
+    public string Filtro {get; set;} = "";
+    
+    public string Criterio {get; set;} ="";
+
     public List<Sistemas> lista { get; set; } = new List<Sistemas>();
 
     public void Buscar()
     {
-        if (string.IsNullOrWhiteSpace(Nombre))
+        switch(Filtro)
+        {
+            case "1":
+                int id;
+                int.TryParse(Criterio, out id);
+                lista = SistemasBLL.GetListWithCriterion(s => s.SistemaId == id);
+                break;
+            case "2":
+                lista = SistemasBLL.GetListWithCriterion(s => s.Nombre.Contains(Criterio));
+                break;
+            default:
+                lista = SistemasBLL.GetList();
+                break;
+            
+        }
+        conteo = lista.Count();
+
+
+        /*if (string.IsNullOrWhiteSpace(Nombre))
             lista = SistemasBLL.GetList(s => true);
         else
             lista = SistemasBLL.GetList(s => s.Nombre.Contains(Nombre));
 
-        conteo = lista.Count();
+        conteo = lista.Count();*/
     }
 
 }

@@ -56,12 +56,29 @@ namespace TicketManager.BLL
                 .FirstOrDefault(s => s.SistemaId == SistemaId);
         }
 
-        public List<Sistemas> GetList(Expression<Func<Sistemas, bool>> Criterio)
+
+        public List<Sistemas> GetListWithCriterion(Expression<Func<Sistemas, bool>> Criterio)
         {
             return _contexto.Sistemas
                 .Where(Criterio)
                 .AsNoTracking()
                 .ToList();
         }
+
+        public List<Sistemas> GetList()
+        {
+            return _contexto.Sistemas
+            .AsNoTracking()
+            .ToList();
+        }
+        /*
+        public List<Sistemas> GetListWithCriterion(string Criterio)
+        {
+            return _contexto.Sistemas
+            .Where(s => s.Nombre.Contains(Criterio))
+            .AsNoTracking()
+            .ToList();
+        }
+        */
     }
 }

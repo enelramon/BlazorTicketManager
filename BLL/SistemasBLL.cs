@@ -16,7 +16,7 @@ namespace TicketManager.BLL
 
         public bool Guardar(Sistemas Sistema)
         {
-            // busca si el registro existe, si existe lo modifica y si no lo inserta
+            
             if (!Existe(Sistema.SistemaId))
                 return Insertar(Sistema);
             else
@@ -71,14 +71,6 @@ namespace TicketManager.BLL
             .AsNoTracking()
             .ToList();
         }
-        /*
-        public List<Sistemas> GetListWithCriterion(string Criterio)
-        {
-            return _contexto.Sistemas
-            .Where(s => s.Nombre.Contains(Criterio))
-            .AsNoTracking()
-            .ToList();
-        }
-        */
+        
     }
 }
